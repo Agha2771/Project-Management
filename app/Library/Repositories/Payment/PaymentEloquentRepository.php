@@ -1,0 +1,61 @@
+<?php namespace ProjectManagement\Repositories\Payment;
+
+use ProjectManagement\Abstracts\EloquentRepository;
+use ProjectManagement\Models\Payment; // Update to use Payment model
+
+class PaymentEloquentRepository extends EloquentRepository implements PaymentRepositoryInterface
+{
+    public function __construct()
+    {
+        $this->model = new Payment(); // Update to initialize Payment model
+    }
+
+    public function fetch_all()
+    {
+        return $this->model->all();
+    }
+
+    public function find($id)
+    {
+        return $this->model->find($id);
+    }
+
+    public function getPaymentAgainstClient($invoice_id){
+        return $this->model->where('invoice_id' , $invoice_id)->latest()->first();
+    }
+    public function create($data)
+    {
+        $payment = new $this->model();
+        $payment->invoice_id = $data['invoice_id']; // Updated to include user_id
+        $payment->amount_paid = $data['amount_paid']; // Updated to use amount_paid
+        $payment->status = $data['status'] ?? 'pending'; // Updated for payment_type
+        $payment->payment_date = $data['payment_date']; // Updated for payment_date
+        $payment->description = $data['description'] ?? null; // Updated for description
+        $payment->remaining_amount = $data['remaining_amount'] ?? 0; // Updated for description
+        $payment->save();
+        return $payment;
+    }
+
+    public function update($id, $data)
+    {
+        $payment = $this->find($id);
+        if ($payment) {
+            $payment->amount_paid = $data['amount_paid'] ?? $payment->amount_paid; // Updated for amount_paid
+            $payment->payment_type = $data['payment_type'] ?? $payment->payment_type; // Updated for payment_type
+            $payment->payment_date = $data['payment_date'] ?? $payment->payment_date; // Updated for payment_date
+            $payment->description = $data['description'] ?? $payment->description; // Updated for description
+            $payment->remaining_amount = $data['remaining_amount'] ?? $payment->remaining_amount; // Updated for description
+            $payment->save();
+        }
+
+        return $payment;
+    }
+
+    public function delete($id)
+    {
+        $payment = $this->find($id);
+        if ($payment) {
+            $payment->delete();
+        }
+    }
+}
