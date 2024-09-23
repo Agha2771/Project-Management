@@ -43,12 +43,12 @@ class ProjectController extends Controller
         $perPage = $request->input('page_size', 10);
         $pageNum = $request->input('page_num', 1);
         $search = $request->input('search', '');
-        $leads = $this->projectRepository->paginate($perPage, ['*'], 'page', $pageNum, $search);
+        $projects = $this->projectRepository->paginate($perPage, ['*'], 'page', $pageNum, $search);
         return $this->successResponse([
-            'data' => ProjectResource::collection($leads),
-            'total_records' => $leads->total(),
-            'current_page' => $leads->currentPage(),
-            'total_pages' => $leads->lastPage(),
+            'data' => ProjectResource::collection($projects),
+            'total_records' => $projects->total(),
+            'current_page' => $projects->currentPage(),
+            'total_pages' => $projects->lastPage(),
             'page_num' => $pageNum,
             'per_page' => $perPage,
         ], ResponseMessage::OK, Response::HTTP_OK);

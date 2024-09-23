@@ -39,13 +39,20 @@ class UserController extends Controller
             return $this->failureResponse('Invalid token!', 400);
         }
 
-        $newToken = JWTAuth::refresh($token);
-        $responseData = [
-            'message' => 'Success',
-            'accessToken' => $newToken['access_token'],
-            'tokenType' => $token['token_type'],
-        ];
-        return $this->successResponse($responseData,ResponseMessage::OK , Response::HTTP_OK);
+        try {
+            $newToken = JWTAuth::refresh($token);
+
+            // Assuming $newToken is a string, as JWTAuth::refresh typically returns a string token
+            $responseData = [
+                'message' => 'Success',
+                'accessToken' => $newToken,
+                'tokenType' => 'Bearer', // Typically, the token type is 'Bearer'
+            ];
+
+            return $this->successResponse($responseData, ResponseMessage::OK, Response::HTTP_OK);
+        } catch (\Exception $e) {
+            return $this->failureResponse('Failed to refresh token: ' . $e->getMessage(), 500);
+        }
     }
 
     public function register(UserRegisterRequest $request){

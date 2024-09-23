@@ -71,7 +71,7 @@ class ProjectEloquentRepository extends EloquentRepository implements ProjectRep
 
     public function paginate(int $perPage = 15, array $columns = ['*'], $pageName = 'page', $page = null, $searchTerm = null)
     {
-        $query = $this->model::with('user'); // Assuming 'user' is the relationship name
+        $query = $this->model::with('user');
 
         if ($searchTerm) {
             $query->where(function ($query) use ($searchTerm) {
