@@ -19,7 +19,7 @@ class CreateInvoiceRequest extends FormRequest
             'amount' => 'required|numeric|min:0',
             'status' => 'in:pending,sent',
             'project_expenses' => 'required|array',
-            'currency_id'=> 'required|exists:currencies,id'
+            'currency_id'=> 'required|exists:currencies,id',
         ];
     }
 

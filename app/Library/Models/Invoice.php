@@ -13,7 +13,9 @@ class Invoice extends Model
     public function project(){
         return $this->belongsTo(Project::class);
     }
-
+    public function user(){
+        return $this->belongsTo(User::class);
+    }
     public function currency(){
         return $this->belongsTo(Currency::class);
     }

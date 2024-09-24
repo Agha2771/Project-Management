@@ -5,7 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::prefix('invoices')->group(function () {
-    Route::get('', [InvoiceController::class, 'get_invoices']);
+    Route::get('', [InvoiceController::class, 'getInvoices']);
     Route::get('/delete/{InvId}', [InvoiceController::class, 'destroy']);
     Route::post('/create', [InvoiceController::class, 'create']);
     Route::post('/attachmets', [InvoiceController::class, 'storeAttachments']);

@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use ProjectManagement\Repositories\Invoice\InvoiceRepositoryInterface;
 use ProjectManagement\Repositories\ProjectExpense\ProjectExpenseRepositoryInterface;
 use ProjectManagement\Resources\InvoiceResource;
+use Illuminate\Http\Request;
 use ProjectManagement\ValidationRequests\CreateInvoiceRequest;
 use ProjectManagement\ValidationRequests\UpdateInvoiceRequest;
 
@@ -27,6 +28,23 @@ class InvoiceController extends Controller
     {
         $invoices = $this->invoiceRepository->fetch_all();
         return $this->successResponse(InvoiceResource::collection($invoices), ResponseMessage::OK , Response::HTTP_OK);
+    }
+
+    public function getInvoices(Request $request)
+    {
+        $per_page = $request->input('page_size', 10);
+        $page_mum = $request->input('page_num', 1);
+        $search = $request->input('search', '');
+        $sort_by = $request->input('sortBy', 'desc');
+        $projects = $this->invoiceRepository->paginate($per_page, ['*'], 'page', $page_mum, $search , $sort_by);
+        return $this->successResponse([
+            'data' => InvoiceResource::collection($projects),
+            'total_records' => $projects->total(),
+            'current_page' => $projects->currentPage(),
+            'total_pages' => $projects->lastPage(),
+            'page_num' => $page_mum,
+            'per_page' => $per_page,
+        ], ResponseMessage::OK, Response::HTTP_OK);
     }
     public function create(CreateInvoiceRequest $request)
     {

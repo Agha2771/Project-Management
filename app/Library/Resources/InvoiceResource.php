@@ -18,7 +18,12 @@ class InvoiceResource extends JsonResource
                 'id' => $this->project->id,
                 'title' => $this->project->title,
             ]: null,
+            'user' => $this->user ? [
+                'id' => $this->user->id,
+                'title' => $this->user->name,
+            ]: null,
             'invoice_date' => $this->invoice_date,
+            'hash' => $this->hash,
             'due_date' => $this->due_date,
             'currency' => $this->currency->sign,
             'amount' => $this->amount,

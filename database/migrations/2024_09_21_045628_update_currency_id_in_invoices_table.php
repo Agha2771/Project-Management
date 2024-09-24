@@ -14,6 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('invoices', function (Blueprint $table) {
+            $table->string('hash' , 20)->unique();
             $table->foreignId('currency_id')->constrained('currencies')->onDelete('cascade');
 
         });
@@ -28,7 +29,8 @@ return new class extends Migration
     {
         Schema::table('invoices', function (Blueprint $table) {
                         $table->dropForeign(['currency_id']); // Drop foreign key
-                        $table->dropColumn('currency_id');     // Drop the column
+                        $table->dropColumn('currency_id');
+                        $table->dropColumn('hash');
         });
     }
 };
