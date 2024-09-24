@@ -16,7 +16,7 @@ class UpdateInvoiceRequest extends FormRequest
             'project_id' => 'nullable|exists:projects,id',
             'invoice_date' => 'sometimes|date',
             'amount' => 'sometimes|numeric|min:0',
-            'status' => 'sometimes|in:pending,sent',
+            // 'status' => 'sometimes|in:pending,sent',
             'project_expenses' => 'nullable|array',
             'currency_id'=> 'sometimes|exists:currencies,id'
         ];
@@ -33,7 +33,7 @@ class UpdateInvoiceRequest extends FormRequest
             'invoice_date' => $request->input('invoice_date'),
             'due_date' => $request->input('due_date'),
             'amount' => $request->input('amount'),
-            'status' => $request->input('status'),
+            // 'status' => $request->input('status'),
             'currency_id' => $request->input('currency_id'),
             'project_expenses' => $request->input('project_expenses'),
         ];

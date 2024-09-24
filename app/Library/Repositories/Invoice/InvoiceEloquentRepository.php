@@ -30,7 +30,7 @@ class InvoiceEloquentRepository extends EloquentRepository implements InvoiceRep
         $invoice->project_id = $data['project_id'] ?? null;
         $invoice->sent_time = Carbon::now();
         $invoice->amount = $data['amount'];
-        $invoice->status = $data['status'] ?? 'pending';
+        $invoice->status = 'pending';
         $uniqueNumber = strtoupper(uniqid());
         $invoice->hash = '#INV' . substr($uniqueNumber, 0, 16);
         $invoice->save();
@@ -47,7 +47,7 @@ class InvoiceEloquentRepository extends EloquentRepository implements InvoiceRep
             $invoice->project_id = $data['project_id'] ?? $invoice->project_id;
             $invoice->sent_time = $data['sent_time'] ?? $invoice->sent_time;
             $invoice->amount = $data['amount'] ?? $invoice->amount;
-            $invoice->status = $data['status'] ?? $invoice->status;
+            // $invoice->status = $data['status'] ?? $invoice->status;
             $invoice->save();
         }
         return $invoice;

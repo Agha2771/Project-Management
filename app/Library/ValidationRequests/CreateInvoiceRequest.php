@@ -16,7 +16,7 @@ class CreateInvoiceRequest extends FormRequest
             'project_id' => 'nullable|exists:projects,id',
             'invoice_date' => 'required|date',
             'amount' => 'required|numeric|min:0',
-            'status' => 'in:pending,sent',
+            // 'status' => 'in:pending,sent',
             'project_expenses' => 'required|array',
             'currency_id'=> 'required|exists:currencies,id',
         ];
@@ -31,7 +31,7 @@ class CreateInvoiceRequest extends FormRequest
             'invoice_date' => $request->input('invoice_date'),
             'due_date' => $request->input('due_date'),
             'amount' => $request->input('amount'),
-            'status' => $request->input('status'),
+            // 'status' => $request->input('status'),
             'currency_id' => $request->input('currency_id'),
             'project_expenses' => $request->input('project_expenses'),
         ];
