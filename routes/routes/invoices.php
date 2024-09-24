@@ -11,6 +11,6 @@ Route::prefix('invoices')->group(function () {
     Route::post('/attachmets', [InvoiceController::class, 'storeAttachments']);
     Route::put('/update/{projId}', [InvoiceController::class, 'update']);
     Route::post('/{invoice}/send', [InvoiceController::class, 'sendInvoice']);
-    Route::get('/{invoice}/pdf', [InvoiceController::class, 'generatePDF']);
+    Route::post('/{invoice}/pdf', [InvoiceController::class, 'generatePDF']);
 });
 

@@ -13,12 +13,11 @@ class UpdateInvoiceRequest extends FormRequest
     {
         return [
             'user_id' => 'sometimes|exists:users,id',
-            'project_id' => 'sometimes|exists:projects,id',
+            'project_id' => 'nullable|exists:projects,id',
             'invoice_date' => 'sometimes|date',
-            'due_date' => 'sometimes|date',
             'amount' => 'sometimes|numeric|min:0',
             'status' => 'sometimes|in:pending,sent',
-            'project_expenses' => 'sometimes|array',
+            'project_expenses' => 'nullable|array',
             'currency_id'=> 'sometimes|exists:currencies,id'
         ];
     }

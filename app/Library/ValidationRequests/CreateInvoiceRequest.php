@@ -13,9 +13,8 @@ class CreateInvoiceRequest extends FormRequest
     {
         return [
             'user_id' => 'required|exists:users,id',
-            'project_id' => 'sometimes|exists:projects,id',
+            'project_id' => 'nullable|exists:projects,id',
             'invoice_date' => 'required|date',
-            'due_date' => 'required|date',
             'amount' => 'required|numeric|min:0',
             'status' => 'in:pending,sent',
             'project_expenses' => 'required|array',

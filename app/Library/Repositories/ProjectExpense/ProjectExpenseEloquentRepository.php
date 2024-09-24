@@ -21,11 +21,34 @@ class ProjectExpenseEloquentRepository extends EloquentRepository implements Pro
         $expense->project_id = $project_id ?? null;
         $expense->invoice_id = $invoice_id;
         $expense->description = $data['description'];
-        $expense->qty = $data['qty'] ?? 1;
+        $expense->qty = $data['quantity'] ?? 1;
         $expense->discount = $data['discount'] ?? 0.00;
         $expense->amount = $data['amount'];
         $expense->save();
         return $expense;
+    }
+
+    public function updateOrCreate($dataArray, $invoice_id, $project_id)
+    {
+        $existingExpenses = $this->model->where('invoice_id', $invoice_id)->get();
+        $incomingIds = array_filter(array_column($dataArray, 'id'));
+        foreach ($existingExpenses as $expense) {
+            if (!in_array($expense->id, $incomingIds)) {
+                $expense->delete();
+            }
+        }
+        foreach ($dataArray as $data) {
+            $this->updateOrCreateSingle($data, $invoice_id, $project_id);
+        }
+    }
+
+    private function updateOrCreateSingle($data, $invoice_id, $project_id)
+    {
+        if (isset($data['id']) && $data['id'] !== null) {
+            return $this->update($data['id'], $data);
+        } else {
+            return $this->create($data, $invoice_id, $project_id);
+        }
     }
 
     public function update($id, $data)

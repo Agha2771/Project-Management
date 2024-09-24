@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class InvoiceResource extends JsonResource
+class InvoicePdfResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -28,7 +28,7 @@ class InvoiceResource extends JsonResource
             'hash' => $this->hash,
             'due_date' => $this->due_date,
             'currency' => $this->currency,
-            'amount' => $this->amount,
+            'amount' => $this->amount ?? 0,
             'status' => $this->status,
             'project_expenses' => ProjectExpensesResource::collection($this->project_expenses)
         ];

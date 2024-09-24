@@ -8,7 +8,9 @@ use Symfony\Component\HttpFoundation\Response;
 use ProjectManagement\Repositories\Invoice\InvoiceRepositoryInterface;
 use ProjectManagement\Repositories\ProjectExpense\ProjectExpenseRepositoryInterface;
 use ProjectManagement\Resources\InvoiceResource;
+use ProjectManagement\Resources\InvoicePdfResource;
 use Illuminate\Http\Request;
+use ProjectManagement\Services\InvoiceService;
 use ProjectManagement\ValidationRequests\CreateInvoiceRequest;
 use ProjectManagement\ValidationRequests\UpdateInvoiceRequest;
 
@@ -64,13 +66,22 @@ class InvoiceController extends Controller
     {
         $data = $request->prepareRequest();
         $invoice = $this->invoiceRepository->update($id , $data);
+        if($invoice){
+            $this->projectExpenseRepository->updateOrCreate($data['project_expenses'] , $invoice->id , $invoice->project_id);
+        }
         return $this->successResponse(new InvoiceResource($invoice), ResponseMessage::OK , Response::HTTP_OK);
     }
-
     public function destroy($id)
     {
         $this->invoiceRepository->delete($id);
         return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
     }
+    public function generatePDF(InvoiceService $invoiceSerivce , $id){
+
+        $invoice = $this->invoiceRepository->find($id);
+        $prepare_data = new InvoicePdfResource($invoice);
+        $invoice_pdf= $invoiceSerivce->generatePaymentPdf($prepare_data);
+        return $this->successResponse($invoice_pdf, ResponseMessage::OK , Response::HTTP_OK);
+     }
 
 }

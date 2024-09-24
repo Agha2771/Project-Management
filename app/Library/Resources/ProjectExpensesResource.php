@@ -13,6 +13,7 @@ class ProjectExpensesResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'description' => $this->description,
             'qty' => $this->qty,
             'amount' => $this->amount,
