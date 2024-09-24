@@ -57,6 +57,7 @@ class ProjectController extends Controller
     {
         $data = $request->prepareRequest();
         $project = $this->projectRepository->create($data);
+        $this->proAssigneesRepository->create($project->id , $data['assignee_ids']);
         return $this->successResponse(new ProjectResource($project), ResponseMessage::OK , Response::HTTP_OK);
     }
 
@@ -64,9 +65,7 @@ class ProjectController extends Controller
     {
         $data = $request->prepareRequest();
         $project = $this->projectRepository->update($id , $data);
-        if ($data['assignees']){
-            $this->proAssigneesRepository->create($id , $data['assignees']);
-        }
+        $this->proAssigneesRepository->create($id , $data['assignees']);
         return $this->successResponse(new ProjectResource($project), ResponseMessage::OK , Response::HTTP_OK);
     }
 

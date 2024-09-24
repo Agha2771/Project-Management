@@ -12,8 +12,13 @@ class UserEloquentRepository extends EloquentRepository implements UserRepositor
         $this->model = new User();
     }
 
-    public function fetch_all_clients(){
-        return $this->model->select('id' , 'name')->where('user_type', 'client')->get();
+    public function fetch_all_users($type){
+        if($type == 'client'){
+            return $this->model->select('id' , 'name')->where('user_type', 'client')->get();
+
+        }else{
+            return $this->model->select('id' , 'name')->where('user_type', 'platform')->get();
+        }
     }
 
     public function create($data){

@@ -22,6 +22,7 @@ class UpdateProjectRequest extends FormRequest
             'inquiry_id' => 'nullable|exists:inquiries,id',
             'assignees' => 'array',
             'user_id' => 'required|exists:users,id',
+            'assignee_ids' => 'nullable|array',
         ];
     }
 
@@ -54,7 +55,8 @@ class UpdateProjectRequest extends FormRequest
             'description' => $request->input('description'),
             'currency_id' => $request->input('currency_id'),
             'assignees' => $request->input('assignees'),
-            'user_id' => $request->input('user_id')
+            'user_id' => $request->input('user_id'),
+            'assignee_ids' => $request->input('assignee_ids' , []),
         ];
     }
 }

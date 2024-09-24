@@ -21,6 +21,7 @@ class CreateProjectRequest extends FormRequest
             'currency_id' => 'required|exists:currencies,id',
             'inquiry_id' => 'nullable|exists:inquiries,id',
             'user_id' => 'required|exists:users,id',
+            'assignee_ids' => 'nullable|array',
         ];
     }
 
@@ -55,6 +56,7 @@ class CreateProjectRequest extends FormRequest
             'budget' => $request->input('budget'),
             'description' => $request->input('description'),
             'currency_id' => $request->input('currency_id'),
+            'assignee_ids' => $request->input('assignee_ids' , []),
         ];
     }
 }

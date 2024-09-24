@@ -4,7 +4,7 @@ use ProjectManagement\Abstracts\RepositoryInterface;
 
 interface UserRepositoryInterface extends RepositoryInterface
 {
-    public function fetch_all_clients();
+    public function fetch_all_users($type);
 
     public function create($data);
 

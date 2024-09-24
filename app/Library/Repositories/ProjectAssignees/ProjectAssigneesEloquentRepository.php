@@ -17,13 +17,21 @@ class ProjectAssigneesEloquentRepository extends EloquentRepository implements P
                     ->where('user_id', $user_id)
                     ->first();
     }
-  
-    public function create($id ,  $user_ids)
+
+    public function create($id, $user_ids)
     {
+        $this->model::where('project_id', $id)
+            ->whereNotIn('user_id', $user_ids)
+            ->delete();
+
         $projects = [];
+
+        $existingUserIds = $this->model::where('project_id', $id)
+            ->pluck('user_id')
+            ->toArray();
+
         foreach ($user_ids as $user_id) {
-            $already_exists = $this->find($id, $user_id);
-            if (!$already_exists) {
+            if (!in_array($user_id, $existingUserIds)) {
                 $project = new $this->model();
                 $project->project_id = $id;
                 $project->user_id = $user_id;
@@ -33,4 +41,5 @@ class ProjectAssigneesEloquentRepository extends EloquentRepository implements P
         }
         return $projects;
     }
+
 }

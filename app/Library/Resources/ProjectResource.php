@@ -17,6 +17,7 @@ class ProjectResource extends JsonResource
                 'id' => $this->lead->id,
                 'title' => $this->lead->title,
             ] : null,
+            'assignees' => ProjectAssigneeResource::collection($this->assignees),
             'user_id' => $this->user_id,
             'start_date' => $this->start_date,
             'end_date' => $this->end_date,

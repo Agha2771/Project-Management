@@ -12,6 +12,7 @@ use ProjectManagement\Resources\ClientResource;
 use ProjectManagement\Resources\ClientWithProjectsResource;
 use Illuminate\Http\Request;
 use ProjectManagement\Models\Currency;
+use ProjectManagement\Repositories\ProjectAssignees\ProjectAssigneesRepositoryInterface;
 use ProjectManagement\Resources\ClientNotesResource;
 use ProjectManagement\ValidationRequests\CreateClientRequest;
 use ProjectManagement\ValidationRequests\UpdateClientRequest;
@@ -30,6 +31,7 @@ class ClientController extends Controller
         $this->clientRepository = $clientRepository;
         $this->userRepository = $userRepository;
         $this->clientNotesRepository = $clientNotesRepository;
+
     }
     public function index(Request $request)
     {
@@ -54,7 +56,8 @@ class ClientController extends Controller
 
     public function getAllClients(Request $request)
     {
-        $clients = $this->userRepository->fetch_all_clients();
+        $type = $request->input('type' , 'client');
+        $clients = $this->userRepository->fetch_all_users($type);
         return $this->successResponse($clients, ResponseMessage::OK, Response::HTTP_OK);
     }
     public function getClient($client_id){
