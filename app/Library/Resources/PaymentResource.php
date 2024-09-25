@@ -14,7 +14,8 @@ class PaymentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'amount' => $this->amount,
+            'hash' =>  $this->invoice->hash,
+            'amount' => $this->invoice->amount,
             'amount_paid' => $this->amount_paid, // Update to amount_paid
             'status' => $this->status, // Update to payment_type
             'payment_date' => $this->payment_date, // Update to payment_date

@@ -20,7 +20,7 @@ class CreateProductAttachmentRequest extends FormRequest
                 'required',
                 function ($attribute, $value, $fail) {
                     $itemType = $this->input('item_type');
-                    
+
                     if ($itemType === 'inquiry') {
                         if (!Inquiry::find($value)) {
                             $fail('The selected ' . $attribute . ' is invalid for the given item type.');

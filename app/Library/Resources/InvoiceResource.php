@@ -12,6 +12,7 @@ class InvoiceResource extends JsonResource
      */
     public function toArray($request)
     {
+        $latestPayment = $this->payments()->latest()->first();
         return [
             'id' => $this->id,
             'project' => $this->project ? [
@@ -30,6 +31,7 @@ class InvoiceResource extends JsonResource
             'currency' => $this->currency,
             'amount' => $this->amount,
             'status' => $this->status,
+            'remaining_amount' => $latestPayment ? $latestPayment->remaining_amount : $this->amount,
             'project_expenses' => ProjectExpensesResource::collection($this->project_expenses)
         ];
     }

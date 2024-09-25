@@ -14,6 +14,16 @@ class Client extends Model
         return $this->belongsTo(User::class , 'user_id' , 'id');
     }
 
+    public function country(){
+        return $this->belongsTo(Country::class);
+    }
+    public function state(){
+        return $this->belongsTo(State::class);
+    }
+    public function city(){
+        return $this->belongsTo(City::class);
+    }
+
     public function projects()
     {
         return $this->hasMany(Project::class, 'user_id', 'user_id');

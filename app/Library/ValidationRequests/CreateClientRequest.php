@@ -19,6 +19,10 @@ class CreateClientRequest extends FormRequest
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:255',
             'referance' => 'nullable|string|max:255',
+            'country_id' => 'nullable|exists:countries,id',
+            'state_id' => 'nullable|exists:states,id',
+            'city_id' => 'nullable|exists:cities,id',
+
         ];
     }
 
@@ -46,7 +50,10 @@ class CreateClientRequest extends FormRequest
             'email' => $request['email'],
             'phone' => $request['phone'],
             'address' => $request['address'],
-            'referance' => $request['referance']
+            'referance' => $request['referance'],
+            'country_id' => $request['country_id'] ?? null,
+            'state_id' => $request['state_id'] ?? null,
+            'city_id' => $request['city_id'] ?? null
         ];
     }
 }

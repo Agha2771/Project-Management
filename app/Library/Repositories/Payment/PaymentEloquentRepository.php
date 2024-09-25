@@ -10,9 +10,13 @@ class PaymentEloquentRepository extends EloquentRepository implements PaymentRep
         $this->model = new Payment(); // Update to initialize Payment model
     }
 
-    public function fetch_all()
+    public function fetch_all($client_id)
     {
-        return $this->model->all();
+        if(!isset($client_id)){
+            return $this->model->all();
+        }else{
+            return $this->model->where('user_id' , $client_id)->get();
+        }
     }
 
     public function find($id)
@@ -57,5 +61,23 @@ class PaymentEloquentRepository extends EloquentRepository implements PaymentRep
         if ($payment) {
             $payment->delete();
         }
+    }
+
+    public function paginate(int $per_page = 15, array $columns = ['*'], $page_name = 'page', $page = null, $search_term = null , $sort_by='desc')
+    {
+        $query = $this->model::with('invoice');
+
+        if ($search_term) {
+            $query->where(function ($query) use ($search_term) {
+                $query
+                      ->Where('status', 'like', "%{$search_term}%")
+                      ->orWhereHas('invoice', function ($query) use ($search_term) {
+                          $query->where('hash', 'like', "%{$search_term}%");
+                      })
+                    ;
+            });
+        }
+        $query->orderBy('created_at', $sort_by);
+        return $query->paginate($per_page, $columns, $page_name, $page);
     }
 }

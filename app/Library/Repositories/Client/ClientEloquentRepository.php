@@ -32,6 +32,9 @@ class ClientEloquentRepository extends EloquentRepository implements ClientRepos
     $client->referance = $data['referance'];
     $client->created_by_id = auth()->user()->id;
     $client->user_id = $data['user_id'];
+    $client->country_id = $data['country_id'];
+    $client->state_id = $data['state_id'];
+    $client->city_id = $data['city_id'];
     $client->save();
     return $client;
 }
@@ -61,6 +64,13 @@ public function update($id, $data)
 
     if (isset($data['referance'])) {
         $client->referance = $data['referance'];
+    }
+    if (isset($data['country_id'])) {
+        $client->country_id = $data['country_id'];
+    }    if (isset($data['state_id'])) {
+        $client->state_id = $data['state_id'];
+    }    if (isset($data['city_id'])) {
+        $client->city_id = $data['city_id'];
     }
 
     $client->save();

@@ -28,12 +28,19 @@ class InvoiceController extends Controller
 
     public function get_invoices()
     {
-        $invoices = $this->invoiceRepository->fetch_all();
+        $invoices = $this->invoiceRepository->fetch_all(null);
         return $this->successResponse(InvoiceResource::collection($invoices), ResponseMessage::OK , Response::HTTP_OK);
     }
 
-    public function getInvoices(Request $request)
+    public function getInvoices(Request $request , $client_id = null)
     {
+        if (!$request->has('page_num') && !isset( $client_id)) {
+            $invoices = $this->invoiceRepository->fetch_all(null);
+            return $this->successResponse(InvoiceResource::collection($invoices), ResponseMessage::OK , Response::HTTP_OK);
+        }else if (!$request->has('page_num') && isset( $client_id)){
+            $invoices = $this->invoiceRepository->fetch_all($client_id);
+            return $this->successResponse(InvoiceResource::collection($invoices), ResponseMessage::OK , Response::HTTP_OK);
+        }else{
         $per_page = $request->input('page_size', 10);
         $page_mum = $request->input('page_num', 1);
         $search = $request->input('search', '');
@@ -47,6 +54,19 @@ class InvoiceController extends Controller
             'page_num' => $page_mum,
             'per_page' => $per_page,
         ], ResponseMessage::OK, Response::HTTP_OK);
+    }
+
+    }
+
+    public function getInvoice($invoice_id){
+
+        if($invoice_id){
+            $invoice = $this->invoiceRepository->find($invoice_id);
+            return $this->successResponse(new InvoiceResource($invoice), ResponseMessage::OK, Response::HTTP_OK);
+        }else{
+            return $this->failureResponse('', 404);
+        }
+
     }
     public function create(CreateInvoiceRequest $request)
     {

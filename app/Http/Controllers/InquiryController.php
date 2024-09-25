@@ -65,6 +65,14 @@ class InquiryController extends Controller
     {
         $data = $request->prepareRequest();
         $inquiry = $this->inquiryRepository->create($data);
+        if ($request->has('attachments')) {
+            $prepare_data = [
+                'item_type' => 'inquiry',
+                'item_id' => $inquiry->id,
+                'files' => $data['attachments']
+            ];
+            helper::storeAttachments($prepare_data);
+        }
         return $this->successResponse(new InquiryResource($inquiry), ResponseMessage::OK , Response::HTTP_OK);
     }
 

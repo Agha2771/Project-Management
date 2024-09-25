@@ -4,7 +4,7 @@ use ProjectManagement\Abstracts\RepositoryInterface;
 
 interface InvoiceRepositoryInterface extends RepositoryInterface
 {
-    public function fetch_all();
+    public function fetch_all($client_id);
     public function find($id);
     public function create(array $data);
     public function update($id, array $data);

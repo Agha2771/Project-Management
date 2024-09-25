@@ -19,7 +19,8 @@ class CreateInquiryRequest extends FormRequest
             'budget' => 'nullable|numeric|min:0',
             'description' => 'nullable|string',
             'currency_id' => 'required|exists:currencies,id',
-            'client_id' => 'required|exists:users,id'
+            'client_id' => 'required|exists:users,id',
+            'attachments' => 'nullable|array'
         ];
     }
 
@@ -53,6 +54,7 @@ class CreateInquiryRequest extends FormRequest
             'description' => $request->input('description'),
             'currency_id' => $request->input('currency_id'),
             'client_id' => $request->input('client_id'),
+            'attachments' => $request->input('attachments'),
         ];
     }
 }

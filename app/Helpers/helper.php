@@ -19,8 +19,8 @@ class helper
             $attachment = new ProjectAttachment();
             $attachment->file_path = $filePath;
             $attachment->attachable_id = $validated['item_id'];
-            $attachment->attachable_type = $validated['item_type'] === 'inquiry' 
-                ?Inquiry::class 
+            $attachment->attachable_type = $validated['item_type'] === 'inquiry'
+                ?Inquiry::class
                 :Project::class;
             $attachment->save();
         }

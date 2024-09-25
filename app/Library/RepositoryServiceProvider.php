@@ -23,6 +23,16 @@ use ProjectManagement\Repositories\Payment\PaymentRepositoryInterface;
 use ProjectManagement\Repositories\Payment\PaymentEloquentRepository;
 use ProjectManagement\Repositories\ProjectExpense\ProjectExpenseRepositoryInterface;
 use ProjectManagement\Repositories\ProjectExpense\ProjectExpenseEloquentRepository;
+use ProjectManagement\Repositories\Country\CountryRepositoryInterface;
+use ProjectManagement\Repositories\Country\CountryEloquentRepository;
+use ProjectManagement\Repositories\State\StateRepositoryInterface;
+use ProjectManagement\Repositories\State\StateEloquentRepository;
+use ProjectManagement\Repositories\City\CityRepositoryInterface;
+use ProjectManagement\Repositories\City\CityEloquentRepository;
+use ProjectManagement\Repositories\SubCategory\SubCategoryRepositoryInterface;
+use ProjectManagement\Repositories\SubCategory\SubCategoryEloquentRepository;
+use ProjectManagement\Repositories\Category\CategoryRepositoryInterface;
+use ProjectManagement\Repositories\Category\CategoryEloquentRepository;
 
 class RepositoryServiceProvider extends ServiceProvider {
 
@@ -40,6 +50,11 @@ class RepositoryServiceProvider extends ServiceProvider {
 			[ AccountRepositoryInterface::class, AccountEloquentRepository::class ],
 			[ PaymentRepositoryInterface::class, PaymentEloquentRepository::class ],
 			[ ProjectExpenseRepositoryInterface::class, ProjectExpenseEloquentRepository::class ],
+			[ CountryRepositoryInterface::class, CountryEloquentRepository::class ],
+			[ StateRepositoryInterface::class, StateEloquentRepository::class ],
+			[ CityRepositoryInterface::class, CityEloquentRepository::class ],
+			[ CategoryRepositoryInterface::class, CategoryEloquentRepository::class ],
+			[ SubCategoryRepositoryInterface::class, SubCategoryEloquentRepository::class ],
 		];
 		$this->bindInterfacesWithTheirImplementations( $bindings );
 	}

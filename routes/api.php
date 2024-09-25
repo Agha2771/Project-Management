@@ -28,6 +28,11 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     require base_path('routes/routes/inquries.php');
     require base_path('routes/routes/invoices.php');
     require base_path('routes/routes/payments.php');
+    require base_path('routes/routes/countries.php');
+    require base_path('routes/routes/states.php');
+    require base_path('routes/routes/cities.php');
+    require base_path('routes/routes/categories.php');
+    require base_path('routes/routes/subcategories.php');
     Route::prefix('permissions')->group(function (): void {
         Route::get('', [RoleController::class, 'getAllPermissions']);
     });

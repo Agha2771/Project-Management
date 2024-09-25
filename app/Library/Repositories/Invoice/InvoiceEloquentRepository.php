@@ -11,9 +11,13 @@ class InvoiceEloquentRepository extends EloquentRepository implements InvoiceRep
         $this->model = new Invoice();
     }
 
-    public function fetch_all()
+    public function fetch_all($client_id)
     {
-        return $this->model->all();
+        if(!isset($client_id)){
+            return $this->model->all();
+        }else{
+            return $this->model->where('user_id' , $client_id)->get();
+        }
     }
 
     public function find($id)

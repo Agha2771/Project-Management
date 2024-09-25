@@ -11,7 +11,8 @@ use ProjectManagement\Repositories\Project\ProjectRepositoryInterface;
 use ProjectManagement\Resources\PaymentResource;
 use ProjectManagement\ValidationRequests\CreatePaymentRequest;
 use ProjectManagement\ValidationRequests\UpdatePaymentRequest;
-use ProjectManagement\Services\PaymentService;
+use Illuminate\Http\Request;
+
 
 class PaymentController extends Controller
 {
@@ -27,10 +28,29 @@ class PaymentController extends Controller
         $this->invoiceRepository = $invoiceRepository;
     }
 
-    public function index()
+    public function index(Request $request , $client_id = null)
     {
-        $payments = $this->paymentRepository->fetch_all();
-        return $this->successResponse(PaymentResource::collection($payments), ResponseMessage::OK , Response::HTTP_OK);
+        if (!$request->has('page_num') && !isset( $client_id)) {
+            $invoices = $this->paymentRepository->fetch_all(null);
+            return $this->successResponse(PaymentResource::collection($invoices), ResponseMessage::OK , Response::HTTP_OK);
+        }else if (!$request->has('page_num') && isset( $client_id)){
+            $invoices = $this->paymentRepository->fetch_all($client_id);
+            return $this->successResponse(PaymentResource::collection($invoices), ResponseMessage::OK , Response::HTTP_OK);
+        }else{
+        $per_page = $request->input('page_size', 10);
+        $page_mum = $request->input('page_num', 1);
+        $search = $request->input('search', '');
+        $sort_by = $request->input('sortBy', 'desc');
+        $projects = $this->paymentRepository->paginate($per_page, ['*'], 'page', $page_mum, $search , $sort_by);
+        return $this->successResponse([
+            'data' => PaymentResource::collection($projects),
+            'total_records' => $projects->total(),
+            'current_page' => $projects->currentPage(),
+            'total_pages' => $projects->lastPage(),
+            'page_num' => $page_mum,
+            'per_page' => $per_page,
+        ], ResponseMessage::OK, Response::HTTP_OK);
+    }
     }
     public function create(CreatePaymentRequest $request)
     {
@@ -105,18 +125,5 @@ class PaymentController extends Controller
         $this->paymentRepository->delete($id);
         return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
     }
-
-    public function generatePDF(PaymentService $paymentService , $id){
-
-        $payment = $this->paymentRepository->find($id);
-        $data['id'] = $payment->id;
-        $data['remaining_balance'] = $payment->remaining_amount;
-        $data['amount_paid'] =  $payment->project ? $payment->project->budget - $payment->remaining_amount : $payment->amount_paid;
-        $data['client_name'] = $payment->user->name;
-        $data['project_name'] =  $payment->project ? $payment->project->title : 'Unknown';
-        $data['total_budget'] =  $payment->project ? $payment->project->budget : '0';
-        $data['currency'] = $payment->project ? $payment->project->currency : 'PKR';
-        $paymentService->generatePaymentPdf($data);
-     }
 
 }
