@@ -27,6 +27,10 @@ class PaymentEloquentRepository extends EloquentRepository implements PaymentRep
     public function getPaymentAgainstClient($invoice_id){
         return $this->model->where('invoice_id' , $invoice_id)->latest()->first();
     }
+
+    public function getPaymentsAgainstClient($invoice_id){
+        return $this->model->where('invoice_id' , $invoice_id)->get();
+    }
     public function create($data)
     {
         $payment = new $this->model();
@@ -44,11 +48,12 @@ class PaymentEloquentRepository extends EloquentRepository implements PaymentRep
     {
         $payment = $this->find($id);
         if ($payment) {
-            $payment->amount_paid = $data['amount_paid'] ?? $payment->amount_paid; // Updated for amount_paid
-            $payment->payment_type = $data['payment_type'] ?? $payment->payment_type; // Updated for payment_type
-            $payment->payment_date = $data['payment_date'] ?? $payment->payment_date; // Updated for payment_date
-            $payment->description = $data['description'] ?? $payment->description; // Updated for description
-            $payment->remaining_amount = $data['remaining_amount'] ?? $payment->remaining_amount; // Updated for description
+            $payment->invoice_id = $data['invoice_id'] ?? $payment->invoice_id ;
+            $payment->amount_paid = $data['amount_paid'] ??  $payment->amount_paid ;
+            $payment->status = $data['status'] ?? $payment->status;
+            $payment->payment_date = $data['payment_date'] ?? $payment->payment_date;
+            $payment->description = $data['description'] ??  $payment->description;
+            $payment->remaining_amount = $data['remaining_amount'] ?? $payment->remaining_amount;
             $payment->save();
         }
 

@@ -10,6 +10,8 @@ interface PaymentRepositoryInterface extends RepositoryInterface
     public function update($id, array $data);
     public function delete($id);
     public function getPaymentAgainstClient($invoice_id);
+
+    public function getPaymentsAgainstClient($invoice_id);
     public function paginate(int $per_age = 15, array $columns = ['*'], $page_name = 'page', $page = null, $search_term = null ,$sort_by);
 
 }

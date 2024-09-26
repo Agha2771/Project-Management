@@ -85,45 +85,64 @@ class PaymentController extends Controller
         return $this->successResponse(new PaymentResource($payment), ResponseMessage::OK, Response::HTTP_OK);
     }
 
-    // public function update(UpdatePaymentRequest $request, $id)
-    // {
-    //     $data = $request->prepareRequest();
-    //     $payment = $this->paymentRepository->find($id);
-    //     $remaining_amount = $payment->remaining_amount;
-    //     $status = $payment->status;
+    public function update(UpdatePaymentRequest $request, $id)
+    {
+        $data = $request->prepareRequest();
+        $payment = $this->paymentRepository->find($id);
+        $remaining_amount = $payment->remaining_amount;
+        $status = $payment->status;
 
-    //     if (!$payment) {
-    //         return $this->failureResponse('Payment not found!', Response::HTTP_NOT_FOUND);
-    //     }
-    //     if(isset($data['amount_paid'])){
-    //         $project_budged = $payment->budget;
-    //         $lastest_payment = $this->paymentRepository->getPaymentAgainstClient($data['project_id'] , $data['user_id']);
-    //         $remaining_amount = $lastest_payment->remaining_amount - $data['amount_paid'];
-    //         dd($remaining_amount);
-    //         if($data['amount_paid'] > $remaining_amount){
-    //             return $this->failureResponse('Paid amount should be less than or equal to the remaining amount!');
+        if (!$payment) {
+            return $this->failureResponse('Payment not found!', Response::HTTP_NOT_FOUND);
+        }
+        if(isset($data['amount_paid'])){
+            $project_budged = $payment->budget;
+            $lastest_payment = $this->paymentRepository->getPaymentAgainstClient($data['project_id'] , $data['user_id']);
+            $remaining_amount = $lastest_payment->remaining_amount - $data['amount_paid'];
+            dd($remaining_amount);
+            if($data['amount_paid'] > $remaining_amount){
+                return $this->failureResponse('Paid amount should be less than or equal to the remaining amount!');
 
-    //         }else if($data['amount_paid'] < $remaining_amount){
-    //             $status = 'patrial';
-    //         }else{
-    //             $status = 'full';
-    //         }
-    //     }
+            }else if($data['amount_paid'] < $remaining_amount){
+                $status = 'patrial';
+            }else{
+                $status = 'full';
+            }
+        }
 
-    //     $updated_payment = $this->paymentRepository->update($id, array_merge($data, [
-    //         'status' => $status,
-    //         'remaining_amount' => $remaining_amount,
-    //     ]));
+        $updated_payment = $this->paymentRepository->update($id, array_merge($data, [
+            'status' => $status,
+            'remaining_amount' => $remaining_amount,
+        ]));
 
-    //     return $this->successResponse(new PaymentResource($updated_payment), ResponseMessage::OK, Response::HTTP_OK);
-    // }
-
+        return $this->successResponse(new PaymentResource($updated_payment), ResponseMessage::OK, Response::HTTP_OK);
+    }
 
 
     public function destroy($id)
     {
-        $this->paymentRepository->delete($id);
-        return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
+        $payment = $this->paymentRepository->find($id);
+
+        if (!$payment) {
+            return $this->failureResponse('Payment not found!', Response::HTTP_NOT_FOUND);
+        }
+        $invoice_id = $payment->invoice_id;
+        $payment->delete();
+        $invoice = $this->invoiceRepository->find($invoice_id);
+        $all_payments = $this->paymentRepository->getPaymentsAgainstClient($invoice_id);
+        $total_paid = $all_payments->sum('amount_paid');
+        $remaining_amount = $invoice->amount - $total_paid;
+        $latest_payment = $this->paymentRepository->getPaymentAgainstClient($invoice_id);
+        if ($latest_payment) {
+            $updated_status = $remaining_amount == 0 ? 'full' : 'partial';
+            $this->paymentRepository->update($latest_payment->id, [
+                'remaining_amount' => $remaining_amount,
+                'status' => $updated_status,
+            ]);
+        }
+
+        return $this->successResponse('Payment deleted successfully.', ResponseMessage::OK, Response::HTTP_OK);
     }
+
 
 }
