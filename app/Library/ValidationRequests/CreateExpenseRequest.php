@@ -46,6 +46,7 @@ class CreateExpenseRequest extends FormRequest
             'subcategory_id' => $request->get('subcategory_id'),
             'amount' => $request->get('amount'),
             'qty' => $request->get('qty'),
+            'attachments' => $request->get('attachments')
         ];
     }
 }

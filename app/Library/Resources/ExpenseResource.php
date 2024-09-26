@@ -14,7 +14,8 @@ class ExpenseResource extends JsonResource
             'qty' => $this->quantity,
             'subcategory' => $this->subcategory,
             'category_id' => $this->subcategory->category->id,
-            'subcategory_id' => $this->subcategory_id
+            'subcategory_id' => $this->subcategory_id,
+            'attachments' => $this->attachments
         ];
     }
 }

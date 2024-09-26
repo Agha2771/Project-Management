@@ -4,6 +4,7 @@ namespace App\Helpers;
 use ProjectManagement\Models\Project;
 use ProjectManagement\Models\Inquiry;
 use ProjectManagement\Models\Payment;
+use ProjectManagement\Models\Expense;
 use ProjectManagement\Models\ProjectAttachment;
 
 class helper
@@ -31,8 +32,14 @@ class helper
             $attachment = new ProjectAttachment();
             $attachment->file_path = $filePath;
             $attachment->attachable_id = $validated['item_id'];
-            $attachment->attachable_type = ($validated['item_type'] === 'inquiry') ? Inquiry::class :
-            (($validated['item_type'] === 'project') ? Project::class : Payment::class);
+            $attachment->attachable_type = match ($validated['item_type']) {
+                'inquiry' => Inquiry::class,
+                'project' => Project::class,
+                'payment' => Payment::class,
+                'expense' => Expense::class,
+                default => null,
+            };
+
             $attachment->save();
             array_push($an_array, $attachment); // Correctly push attachment into the array
         }

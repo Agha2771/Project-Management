@@ -13,4 +13,8 @@ class Expense extends Model
     public function subcategory(){
         return $this->belongsTo(SubCategory::class);
     }
+    public function attachments()
+    {
+        return $this->morphMany(ProjectAttachment::class, 'attachable');
+    }
 }
