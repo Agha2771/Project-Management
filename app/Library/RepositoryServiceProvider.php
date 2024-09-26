@@ -34,6 +34,9 @@ use ProjectManagement\Repositories\SubCategory\SubCategoryEloquentRepository;
 use ProjectManagement\Repositories\Category\CategoryRepositoryInterface;
 use ProjectManagement\Repositories\Category\CategoryEloquentRepository;
 
+use ProjectManagement\Repositories\Expense\ExpenseRepositoryInterface;
+use ProjectManagement\Repositories\Expense\ExpenseEloquentRepository;
+
 class RepositoryServiceProvider extends ServiceProvider {
 
 	public function register () {
@@ -55,6 +58,7 @@ class RepositoryServiceProvider extends ServiceProvider {
 			[ CityRepositoryInterface::class, CityEloquentRepository::class ],
 			[ CategoryRepositoryInterface::class, CategoryEloquentRepository::class ],
 			[ SubCategoryRepositoryInterface::class, SubCategoryEloquentRepository::class ],
+			[ ExpenseRepositoryInterface::class, ExpenseEloquentRepository::class ],
 		];
 		$this->bindInterfacesWithTheirImplementations( $bindings );
 	}

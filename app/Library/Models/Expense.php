@@ -8,4 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 class Expense extends Model
 {
     use HasFactory;
+    protected $guarded=[];
+
+    public function subcategory(){
+        return $this->belongsTo(SubCategory::class);
+    }
 }

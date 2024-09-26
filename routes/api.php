@@ -14,11 +14,6 @@ use App\Http\Controllers\UserController , App\Http\Controllers\RoleController;
 |
 */
 require base_path('routes/routes/users.php');
-// Route::middleware(['middleware' => 'jwt.auth'])->group(function (){
-
-// });
-
-
 Route::group(['middleware' => 'jwt.auth'], function () {
     Route::post('refresh', [UserController::class, 'refresh']);
     Route::get('auth', [UserController::class, 'authentication']);
@@ -33,6 +28,7 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     require base_path('routes/routes/cities.php');
     require base_path('routes/routes/categories.php');
     require base_path('routes/routes/subcategories.php');
+    require base_path('routes/routes/expenses.php');
     Route::prefix('permissions')->group(function (): void {
         Route::get('', [RoleController::class, 'getAllPermissions']);
     });
