@@ -13,4 +13,8 @@ class Payment extends Model
         return $this->belongsTo(Invoice::class);
     }
 
+    public function attachments()
+    {
+        return $this->morphMany(ProjectAttachment::class, 'attachable');
+    }
 }

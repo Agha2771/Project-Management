@@ -20,7 +20,7 @@ class CreateInquiryRequest extends FormRequest
             'description' => 'nullable|string',
             'currency_id' => 'required|exists:currencies,id',
             'client_id' => 'required|exists:users,id',
-            'attachments' => 'nullable|array'
+            'attachments.*' => 'file',
         ];
     }
 

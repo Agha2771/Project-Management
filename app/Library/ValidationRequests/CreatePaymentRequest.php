@@ -38,6 +38,7 @@ class CreatePaymentRequest extends FormRequest
         'amount_paid' => $request->input('amount_paid'),
         'payment_date' => $request->input('payment_date'),
         'description' => $request->input('description'),
+        'attachments' => $request->input('attachments'),
     ];
 }
 }

@@ -57,6 +57,7 @@ class CreateProjectRequest extends FormRequest
             'description' => $request->input('description'),
             'currency_id' => $request->input('currency_id'),
             'assignee_ids' => $request->input('assignee_ids' , []),
+            'attachments' => $request->input('attachments' , []),
         ];
     }
 }

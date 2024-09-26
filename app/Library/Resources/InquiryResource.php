@@ -22,6 +22,7 @@ class InquiryResource extends JsonResource
             'created_at' => $this->created_at ?? null,
             'updated_at' => $this->updated_at ?? null,
             'currency' => $this->currency ?? null,
+            'attachments' => $this->attachments
         ];
     }
 }

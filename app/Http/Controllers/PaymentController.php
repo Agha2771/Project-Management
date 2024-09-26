@@ -11,7 +11,9 @@ use ProjectManagement\Repositories\Project\ProjectRepositoryInterface;
 use ProjectManagement\Resources\PaymentResource;
 use ProjectManagement\ValidationRequests\CreatePaymentRequest;
 use ProjectManagement\ValidationRequests\UpdatePaymentRequest;
+use  ProjectManagement\Models\ProjectAttachment;
 use Illuminate\Http\Request;
+use App\Helpers\helper;
 
 
 class PaymentController extends Controller
@@ -82,43 +84,62 @@ class PaymentController extends Controller
             }
         }
         $payment = $this->paymentRepository->create(array_merge($data, ['status' => $status, 'remaining_amount' => $remaining_amount]));
+        if ($request->hasFile('attachments')) {
+            $attachments = $request->file('attachments');
+            $prepare_data = [
+                'item_type' => 'payment',
+                'item_id' => $payment->id,
+                'files' => $attachments
+            ];
+            helper::storeAttachments($prepare_data);
+        }
         return $this->successResponse(new PaymentResource($payment), ResponseMessage::OK, Response::HTTP_OK);
     }
 
-    public function update(UpdatePaymentRequest $request, $id)
+    // public function update(UpdatePaymentRequest $request, $id)
+    // {
+    //     $data = $request->prepareRequest();
+    //     $payment = $this->paymentRepository->find($id);
+    //     $remaining_amount = $payment->remaining_amount;
+    //     $status = $payment->status;
+
+    //     if (!$payment) {
+    //         return $this->failureResponse('Payment not found!', Response::HTTP_NOT_FOUND);
+    //     }
+    //     if(isset($data['amount_paid'])){
+    //         $project_budged = $payment->budget;
+    //         $lastest_payment = $this->paymentRepository->getPaymentAgainstClient($data['project_id'] , $data['user_id']);
+    //         $remaining_amount = $lastest_payment->remaining_amount - $data['amount_paid'];
+    //         dd($remaining_amount);
+    //         if($data['amount_paid'] > $remaining_amount){
+    //             return $this->failureResponse('Paid amount should be less than or equal to the remaining amount!');
+
+    //         }else if($data['amount_paid'] < $remaining_amount){
+    //             $status = 'patrial';
+    //         }else{
+    //             $status = 'full';
+    //         }
+    //     }
+
+    //     $updated_payment = $this->paymentRepository->update($id, array_merge($data, [
+    //         'status' => $status,
+    //         'remaining_amount' => $remaining_amount,
+    //     ]));
+
+    //     return $this->successResponse(new PaymentResource($updated_payment), ResponseMessage::OK, Response::HTTP_OK);
+    // }
+
+
+    public function storeAttachments(Request $request)
     {
-        $data = $request->prepareRequest();
-        $payment = $this->paymentRepository->find($id);
-        $remaining_amount = $payment->remaining_amount;
-        $status = $payment->status;
-
-        if (!$payment) {
-            return $this->failureResponse('Payment not found!', Response::HTTP_NOT_FOUND);
-        }
-        if(isset($data['amount_paid'])){
-            $project_budged = $payment->budget;
-            $lastest_payment = $this->paymentRepository->getPaymentAgainstClient($data['project_id'] , $data['user_id']);
-            $remaining_amount = $lastest_payment->remaining_amount - $data['amount_paid'];
-            dd($remaining_amount);
-            if($data['amount_paid'] > $remaining_amount){
-                return $this->failureResponse('Paid amount should be less than or equal to the remaining amount!');
-
-            }else if($data['amount_paid'] < $remaining_amount){
-                $status = 'patrial';
-            }else{
-                $status = 'full';
-            }
-        }
-
-        $updated_payment = $this->paymentRepository->update($id, array_merge($data, [
-            'status' => $status,
-            'remaining_amount' => $remaining_amount,
-        ]));
-
-        return $this->successResponse(new PaymentResource($updated_payment), ResponseMessage::OK, Response::HTTP_OK);
+        $data = [
+            'files' => $request->attachments,
+            'item_id' => $request->item_id,
+            'item_type' => $request->item_type,
+        ];
+        $array = helper::storeAttachments($data);
+        return $this->successResponse($array, ResponseMessage::OK , Response::HTTP_OK);
     }
-
-
     public function destroy($id)
     {
         $payment = $this->paymentRepository->find($id);
@@ -143,6 +164,21 @@ class PaymentController extends Controller
 
         return $this->successResponse('Payment deleted successfully.', ResponseMessage::OK, Response::HTTP_OK);
     }
+    public function removeAttachment($attachment_id)
+    {
+        $attachment = ProjectAttachment::find($attachment_id);
+        if ($attachment) {
+            $filePath = $attachment->file_path;
+            $attachment->delete();
+            $fullPath = storage_path('app/public/' . ltrim($filePath, 'storage/'));
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+            return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
 
+        }
+            return $this->successResponse('', ResponseMessage::ERROR , Response::HTTP_OK);
+
+    }
 
 }

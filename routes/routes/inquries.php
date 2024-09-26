@@ -8,7 +8,8 @@ Route::prefix('inquiries')->group(function () {
     Route::get('/{clientId}', [InquiryController::class, 'index']);
     Route::post('/create', [InquiryController::class, 'create']);
     Route::get('/delete/{InquiryId}', [InquiryController::class, 'destroy']);
-    Route::post('/attachmets', [InquiryController::class, 'storeAttachments']);
+    Route::post('/file-attachmets', [InquiryController::class, 'storeAttachments']);
     Route::put('/update/{InquiryId}', [InquiryController::class, 'update']);
+    Route::get('/remove-attachment/{attachmentid}', [InquiryController::class, 'removeAttachment']);
 });
 

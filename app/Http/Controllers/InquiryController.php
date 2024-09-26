@@ -12,7 +12,7 @@ use ProjectManagement\ValidationRequests\CreateInquiryRequest;
 use ProjectManagement\ValidationRequests\UpdateInquiryRequest;
 use ProjectManagement\ValidationRequests\CreateProductAttachmentRequest;
 use App\Helpers\helper;
-use ProjectManagement\Enums\InquiryStatuses;
+use ProjectManagement\Models\ProjectAttachment;
 use ProjectManagement\Repositories\Project\ProjectRepositoryInterface;
 use Illuminate\Http\Request;
 
@@ -32,10 +32,6 @@ class InquiryController extends Controller
 
     public function index($client_id)
     {
-        // $client = $this->clientRepository->find($client_id);
-        // if (!$client){
-        //     $this->failureResponse('Client not found!' , 404);
-        // }
         $inquries = $this->inquiryRepository->fetch_all($client_id);
         return $this->successResponse(InquiryResource::collection($inquries), ResponseMessage::OK , Response::HTTP_OK);
     }
@@ -65,43 +61,59 @@ class InquiryController extends Controller
     {
         $data = $request->prepareRequest();
         $inquiry = $this->inquiryRepository->create($data);
-        if ($request->has('attachments')) {
+
+        if ($request->hasFile('attachments')) {
+            $attachments = $request->file('attachments');
             $prepare_data = [
                 'item_type' => 'inquiry',
                 'item_id' => $inquiry->id,
-                'files' => $data['attachments']
+                'files' => $attachments
             ];
             helper::storeAttachments($prepare_data);
         }
-        return $this->successResponse(new InquiryResource($inquiry), ResponseMessage::OK , Response::HTTP_OK);
+        return $this->successResponse(new InquiryResource($inquiry), ResponseMessage::OK, Response::HTTP_OK);
     }
+
 
     public function update(UpdateInquiryRequest $request, $id)
     {
         $data = $request->prepareRequest();
-        if (isset($data['status']) && $data['status'] === InquiryStatuses::COMPLETED) {
-            $inquiry = $this->inquiryRepository->find($id);
-            if (!$inquiry){
-                return $this->failureResponse('Inquiry not found!', Response::HTTP_NOT_FOUND);
-            }
-            $project = $this->projectRepository->create($inquiry);
-            helper::approveInquiry($inquiry->attachments , $project->id);
-        }
         $inquiry = $this->inquiryRepository->update($id , $data);
         return $this->successResponse(new InquiryResource($inquiry), ResponseMessage::OK , Response::HTTP_OK);
     }
 
-    public function storeAttachments(CreateProductAttachmentRequest $request)
+    public function storeAttachments(Request $request)
     {
-        $validated = $request->validatedWithFilePaths();
-        helper::storeAttachments($validated);
-        return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
+        $data = [
+            'files' => $request->attachments,
+            'item_id' => $request->item_id,
+            'item_type' => $request->item_type,
+        ];
+        $array = helper::storeAttachments($data);
+        return $this->successResponse($array, ResponseMessage::OK , Response::HTTP_OK);
     }
 
     public function destroy($id)
     {
         $this->inquiryRepository->delete($id);
         return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
+
+    }
+
+    public function removeAttachment($attachment_id)
+    {
+        $attachment = ProjectAttachment::find($attachment_id);
+        if ($attachment) {
+            $filePath = $attachment->file_path;
+            $attachment->delete();
+            $fullPath = storage_path('app/public/' . ltrim($filePath, 'storage/'));
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+            return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
+
+        }
+            return $this->successResponse('', ResponseMessage::ERROR , Response::HTTP_OK);
 
     }
 }
