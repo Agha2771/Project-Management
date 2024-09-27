@@ -95,6 +95,7 @@ class ClientController extends Controller
     public function destroy($id)
     {
         $client = $this->clientRepository->find($id);
+        $client = $this->userRepository->delete($client->user_id);
         $this->userRepository->delete($client->user_id);
         return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
 
