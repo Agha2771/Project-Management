@@ -53,7 +53,7 @@ public function update($id,$data){
   {
       $role = $this->find($id);
       $role->delete();
-      
+
   }
 
   public function syncPermissions($roleId, array $permissions)
@@ -61,9 +61,23 @@ public function update($id,$data){
       $role = $this->find($roleId);
       $role->syncPermissions($permissions);
   }
-  
+
   public function getAllPermissions()
-  {
+{
       return Permission::all();
   }
+
+  public function paginate(int $perPage = 15, array $columns = ['*'], $pageName = 'page', $page = null, $searchTerm = null)
+  {
+      $query = $this->model;
+
+      if ($searchTerm) {
+          $query->where(function ($query) use ($searchTerm) {
+              $query->where('name', 'like', "%{$searchTerm}%");
+          });
+      }
+      $query->orderBy('created_at', 'desc');
+      return $query->paginate($perPage, $columns, $pageName, $page);
+  }
+
 }

@@ -8,10 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 use ProjectManagement\Repositories\Role\RoleRepositoryInterface;
 use ProjectManagement\Resources\RoleResource;
 use ProjectManagement\Resources\PermissionsResource;
-
 use ProjectManagement\ValidationRequests\CreateRoleRequest;
 use ProjectManagement\Repositories\User\UserRepositoryInterface;
 use ProjectManagement\ValidationRequests\UpdateRoleRequest;
+use Illuminate\Http\Request;
+
+
 class RoleController extends Controller
 {
     protected $roleRepository;
@@ -29,10 +31,20 @@ class RoleController extends Controller
         // $this->middleware('permission:delete role', ['only' => ['destroy']]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $roles = $this->roleRepository->fetch_all();
-        return $this->successResponse(RoleResource::collection($roles), ResponseMessage::OK , Response::HTTP_OK); 
+        $perPage = $request->input('page_size', 10);
+        $pageNum = $request->input('page_num', 1);
+        $search = $request->input('search', '');
+        $roles = $this->roleRepository->paginate($perPage, ['*'], 'page', $pageNum, $search);
+        return $this->successResponse([
+            'data' => RoleResource::collection($roles),
+            'total_records' => $roles->total(),
+            'current_page' => $roles->currentPage(),
+            'total_pages' => $roles->lastPage(),
+            'page_num' => $pageNum,
+            'per_page' => $perPage,
+        ], ResponseMessage::OK, Response::HTTP_OK);
     }
     public function create(CreateRoleRequest $request)
     {
@@ -49,6 +61,10 @@ class RoleController extends Controller
         return $this->successResponse(new RoleResource($role), ResponseMessage::OK , Response::HTTP_OK);
     }
 
+    public function permissions(){
+        $permissions = $this->roleRepository->getAllPermissions();
+        return $this->successResponse($permissions, ResponseMessage::OK , Response::HTTP_OK);
+    }
     public function destroy($id , $new_role_id)
     {
         $new_role = $this->roleRepository->find($new_role_id);

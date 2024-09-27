@@ -11,4 +11,6 @@ interface RoleRepositoryInterface extends RepositoryInterface
     public function delete($id);
     public function syncPermissions($roleId, array $permissions);
     public function getAllPermissions();
+    public function paginate(int $perPage = 15, array $columns = ['*'], $pageName = 'page', $page = null, $searchTerm = null);
+
 }
