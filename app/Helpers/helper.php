@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Helpers;
+
+use ProjectManagement\Models\Task;
 use ProjectManagement\Models\Project;
 use ProjectManagement\Models\Inquiry;
 use ProjectManagement\Models\Payment;
@@ -37,6 +39,7 @@ class helper
                 'project' => Project::class,
                 'payment' => Payment::class,
                 'expense' => Expense::class,
+                'task' => Task::class,
                 default => null,
             };
 

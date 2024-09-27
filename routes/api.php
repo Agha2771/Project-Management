@@ -29,6 +29,7 @@ Route::group(['middleware' => 'jwt.auth'], function () {
     require base_path('routes/routes/categories.php');
     require base_path('routes/routes/subcategories.php');
     require base_path('routes/routes/expenses.php');
+    require base_path('routes/routes/tasks.php');
     Route::prefix('permissions')->group(function (): void {
         Route::get('', [RoleController::class, 'getAllPermissions']);
     });

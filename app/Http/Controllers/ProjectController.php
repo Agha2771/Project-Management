@@ -44,6 +44,10 @@ class ProjectController extends Controller
     }
     public function getProjects(Request $request)
     {
+        if (!$request->has('page_num')){
+            $invoices = $this->projectRepository->fetch_all(null);
+            return $this->successResponse(ProjectResource::collection($invoices), ResponseMessage::OK , Response::HTTP_OK);
+        }else{
         $perPage = $request->input('page_size', 10);
         $pageNum = $request->input('page_num', 1);
         $search = $request->input('search', '');
@@ -56,6 +60,7 @@ class ProjectController extends Controller
             'page_num' => $pageNum,
             'per_page' => $perPage,
         ], ResponseMessage::OK, Response::HTTP_OK);
+    }
     }
     public function create(CreateProjectRequest $request)
     {

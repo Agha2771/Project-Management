@@ -33,9 +33,12 @@ use ProjectManagement\Repositories\SubCategory\SubCategoryRepositoryInterface;
 use ProjectManagement\Repositories\SubCategory\SubCategoryEloquentRepository;
 use ProjectManagement\Repositories\Category\CategoryRepositoryInterface;
 use ProjectManagement\Repositories\Category\CategoryEloquentRepository;
-
 use ProjectManagement\Repositories\Expense\ExpenseRepositoryInterface;
 use ProjectManagement\Repositories\Expense\ExpenseEloquentRepository;
+use ProjectManagement\Repositories\Task\TaskRepositoryInterface;
+use ProjectManagement\Repositories\Task\TaskEloquentRepository;
+use ProjectManagement\Repositories\TaskAssignees\TaskAssigneesRepositoryInterface;
+use ProjectManagement\Repositories\TaskAssignees\TaskAssigneesEloquentRepository;
 
 class RepositoryServiceProvider extends ServiceProvider {
 
@@ -59,6 +62,8 @@ class RepositoryServiceProvider extends ServiceProvider {
 			[ CategoryRepositoryInterface::class, CategoryEloquentRepository::class ],
 			[ SubCategoryRepositoryInterface::class, SubCategoryEloquentRepository::class ],
 			[ ExpenseRepositoryInterface::class, ExpenseEloquentRepository::class ],
+			[ TaskRepositoryInterface::class, TaskEloquentRepository::class ],
+			[ TaskAssigneesRepositoryInterface::class, TaskAssigneesEloquentRepository::class ],
 		];
 		$this->bindInterfacesWithTheirImplementations( $bindings );
 	}
