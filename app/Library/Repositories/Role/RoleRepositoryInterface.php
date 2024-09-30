@@ -4,7 +4,7 @@ use ProjectManagement\Abstracts\RepositoryInterface;
 
 interface RoleRepositoryInterface extends RepositoryInterface
 {
-    public function fetch_all();
+    public function fetch_all($role);
     public function find($id);
     public function create(array $data);
     public function update($id, array $data);

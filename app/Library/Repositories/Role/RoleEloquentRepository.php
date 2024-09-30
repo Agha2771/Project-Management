@@ -12,14 +12,16 @@ class RoleEloquentRepository extends EloquentRepository implements RoleRepositor
   {
     $this->model = new Role();
   }
-  public function fetch_all()
+  public function fetch_all($role = null)
   {
-      $roles =  $this->model->all();
-      foreach ($roles as $role)
-      {
-        $role['permissions'] = $role->permissions;
+      if (isset($role)) {
+          $roles = $this->model->where('name', '!=', $role)->get();
+      } else {
+          $roles = $this->model->all();
+          foreach ($roles as $roleItem) {
+            $roleItem['permissions'] = $roleItem->permissions;
+        }
       }
-
       return $roles;
   }
 
@@ -63,7 +65,7 @@ public function update($id,$data){
   }
 
   public function getAllPermissions()
-{
+    {
       return Permission::all();
   }
 

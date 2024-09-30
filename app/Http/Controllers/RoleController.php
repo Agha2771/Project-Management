@@ -12,6 +12,8 @@ use ProjectManagement\ValidationRequests\CreateRoleRequest;
 use ProjectManagement\Repositories\User\UserRepositoryInterface;
 use ProjectManagement\ValidationRequests\UpdateRoleRequest;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Permission;
+
 
 
 class RoleController extends Controller
@@ -31,8 +33,12 @@ class RoleController extends Controller
         // $this->middleware('permission:delete role', ['only' => ['destroy']]);
     }
 
-    public function index(Request $request)
+    public function getRoles(Request $request , $role = null)
     {
+        if (isset($role) && !$request->has('page_size')){
+            $roles = $this->roleRepository->fetch_all($request->role);
+            return $this->successResponse( RoleResource::collection($roles), ResponseMessage::OK , Response::HTTP_OK);
+        }
         $perPage = $request->input('page_size', 10);
         $pageNum = $request->input('page_num', 1);
         $search = $request->input('search', '');
@@ -60,31 +66,33 @@ class RoleController extends Controller
         $role = $this->roleRepository->update($id , $data);
         return $this->successResponse(new RoleResource($role), ResponseMessage::OK , Response::HTTP_OK);
     }
-
-    public function permissions(){
-        $permissions = $this->roleRepository->getAllPermissions();
-        return $this->successResponse($permissions, ResponseMessage::OK , Response::HTTP_OK);
-    }
-    public function destroy($id , $new_role_id)
+    public function destroy($id, $new_role_id = null)
     {
-        $new_role = $this->roleRepository->find($new_role_id);
         $role = $this->roleRepository->find($id);
-        if ($role and $new_role) {
-            $usersWithRole = $this->userRepository->getUserWithSameRole($role->name);
-            foreach ($usersWithRole as $user) {
-                $user->syncRoles($new_role);
+        if ($role) {
+            if ($new_role_id) {
+                $new_role = $this->roleRepository->find($new_role_id);
+                if ($new_role) {
+                    $usersWithRole = $this->userRepository->getUserWithSameRole($role->name);
+                    foreach ($usersWithRole as $user) {
+                        $user->syncRoles($new_role);
+                    }
+                } else {
+                    return $this->failureResponse('New role not found!', Response::HTTP_NOT_FOUND);
+                }
             }
             $this->roleRepository->delete($id);
-        }else{
+        } else {
             return $this->failureResponse('Role not found!', Response::HTTP_NOT_FOUND);
         }
-        return $this->successResponse('', ResponseMessage::OK , Response::HTTP_OK);
 
+        return $this->successResponse('', ResponseMessage::OK, Response::HTTP_OK);
     }
+
 
     public function getAllPermissions()
     {
-        $permissions = $this->roleRepository->getAllPermissions();
-        return $this->successResponse(PermissionsResource::collection($permissions), ResponseMessage::OK , Response::HTTP_OK);
+        $permissions = Permission::all();
+        return $this->successResponse($permissions, ResponseMessage::OK , Response::HTTP_OK);
     }
 }
