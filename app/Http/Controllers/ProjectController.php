@@ -97,7 +97,7 @@ class ProjectController extends Controller
     {
         $data = $request->prepareRequest();
         $project = $this->projectRepository->update($id , $data);
-        $this->proAssigneesRepository->create($id , $data['assignees']);
+        // $this->proAssigneesRepository->create($id , $data['assignees']);
         return $this->successResponse(new ProjectResource($project), ResponseMessage::OK , Response::HTTP_OK);
     }
 
