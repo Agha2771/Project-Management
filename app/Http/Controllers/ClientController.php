@@ -77,7 +77,8 @@ class ClientController extends Controller
             'email' => $data['email'],
             'password' => 12345678,
             'image' => null,
-            'user_type' => 'client'
+            'user_type' => 'client',
+            'status' => 'active'
         ];
         $user = $this->userRepository->create($user_data);
         $data['user_id'] = $user->id;
