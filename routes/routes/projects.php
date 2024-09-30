@@ -5,7 +5,7 @@ use App\Http\Controllers\ProjectController;
 
 
 Route::prefix('projects')->group(function () {
-    Route::get('/{clientId}', action: [ProjectController::class, 'index']);
+    Route::get('/{clientId}/{type?}', action: [ProjectController::class, 'index']);
     Route::get('', [ProjectController::class, 'getProjects']);
     Route::post('/create', [ProjectController::class, 'create']);
     Route::get('/delete/{projId}', [ProjectController::class, 'destroy']);

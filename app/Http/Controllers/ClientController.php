@@ -10,6 +10,7 @@ use ProjectManagement\Repositories\ClientNotes\ClientNotesRepositoryInterface;
 use ProjectManagement\Repositories\User\UserRepositoryInterface;
 use ProjectManagement\Resources\ClientResource;
 use ProjectManagement\Resources\ClientWithProjectsResource;
+use ProjectManagement\Resources\ClientWithPaymentsResource;
 use Illuminate\Http\Request;
 use ProjectManagement\Models\Currency;
 use ProjectManagement\Repositories\ProjectAssignees\ProjectAssigneesRepositoryInterface;
@@ -63,7 +64,7 @@ class ClientController extends Controller
     public function getClient($client_id){
         $client = $this->clientRepository->find($client_id);
         if(!$client){
-            $this->failureResponse('Client not found!' , 404);
+            return $this->failureResponse('Client not found!' , 404);
         }
         return $this->successResponse(new ClientWithProjectsResource($client), ResponseMessage::OK, Response::HTTP_OK);
     }
@@ -101,7 +102,16 @@ class ClientController extends Controller
 
     }
 
+    public function accountDetails($client_id){
+        $client = $this->clientRepository->find($client_id);
+        if($client){
+            return $this->successResponse(new ClientWithPaymentsResource($client), ResponseMessage::OK , Response::HTTP_OK);
 
+        }else{
+            return  $this->failureResponse('Client not found!' , 404);
+        }
+
+    }
     public function getNotes()
     {
         $user_id = auth()->user()->id;

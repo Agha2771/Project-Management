@@ -36,10 +36,15 @@ class ProjectController extends Controller
         $this->inquiryRepository = $inquiryRepository;
     }
 
-    public function index($client_id)
+    public function index($client_id, $type=null)
     {
-        // $client = $this->clientRepository->find($client_id);
-        $projects = $this->projectRepository->fetch_all($client_id);
+        if($type == 'user'){
+            $projects = $this->projectRepository->fetch_all($client_id);
+
+        }else{
+            $client = $this->clientRepository->find($client_id);
+            $projects = $this->projectRepository->fetch_all($client->user_id);
+        }
         return $this->successResponse(ProjectWithExpensesResource::collection($projects), ResponseMessage::OK , Response::HTTP_OK);
     }
     public function getProjects(Request $request)

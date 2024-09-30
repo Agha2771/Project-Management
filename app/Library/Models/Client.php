@@ -29,6 +29,12 @@ class Client extends Model
         return $this->hasMany(Project::class, 'user_id', 'user_id');
     }
 
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class, 'user_id', 'user_id');
+    }
+
     public function leads()
     {
         return $this->hasMany(Inquiry::class, 'user_id', 'user_id');

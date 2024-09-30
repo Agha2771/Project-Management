@@ -10,9 +10,9 @@ Route::prefix('clients')->group(function () {
     Route::get('/{clientId}', [ClientController::class, 'getClient']);
     Route::post('/create', [ClientController::class, 'create']);
     Route::put('/update/{clientId}', [ClientController::class, 'update']);
-    Route::get('{clientId}/delete', [ClientController::class, 'destroy']);
+    Route::get('{clientId}/delete', action: [ClientController::class, 'destroy']);
+    Route::get('/account-details/{client_id}', [ClientController::class, 'accountDetails']);
 
-    // Client Notes
     Route::get('/notes', [ClientController::class, 'getNotes']);
     Route::post('/note/create', [ClientController::class, 'createNote']);
     Route::put('/note/update/{noteId}', [ClientController::class, 'updateNote']);
