@@ -38,6 +38,9 @@ class RoleController extends Controller
         if (isset($role) && !$request->has('page_size')){
             $roles = $this->roleRepository->fetch_all($request->role);
             return $this->successResponse( RoleResource::collection($roles), ResponseMessage::OK , Response::HTTP_OK);
+        }else if(!$request->has('page_size')){
+            $roles = $this->roleRepository->fetch_all(null);
+            return $this->successResponse( RoleResource::collection($roles), ResponseMessage::OK , Response::HTTP_OK);
         }
         $perPage = $request->input('page_size', 10);
         $pageNum = $request->input('page_num', 1);
@@ -45,7 +48,7 @@ class RoleController extends Controller
         $roles = $this->roleRepository->paginate($perPage, ['*'], 'page', $pageNum, $search);
         return $this->successResponse([
             'data' => RoleResource::collection($roles),
-            'total_records' => $roles->total(),
+        'total_records' => $roles->total(),
             'current_page' => $roles->currentPage(),
             'total_pages' => $roles->lastPage(),
             'page_num' => $pageNum,
