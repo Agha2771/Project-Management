@@ -12,6 +12,7 @@ class ClientWithPaymentsResource extends JsonResource
         $amountPaid = $this->invoices()->with('payments')->get()->sum(function ($invoice) {
             return $invoice->payments->sum('amount_paid');
         });
+        $currency = $this->invoices()->first()?->currency;
 
         return [
             'projects_count' => $projectsCount,
@@ -19,6 +20,7 @@ class ClientWithPaymentsResource extends JsonResource
             'total_amount' => $totalAmount,
             'amount_paid' => $amountPaid,
             'remaining_amount' => $totalAmount - $amountPaid,
+            'currency' => $currency ? $currency->code : null,
         ];
     }
 }
