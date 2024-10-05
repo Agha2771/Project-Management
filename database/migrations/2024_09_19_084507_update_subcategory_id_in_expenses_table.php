@@ -14,7 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('expenses', function (Blueprint $table) {
-            $table->foreignId('subcategory_id')->constrained('sub_categories')->onDelete('cascade');
+            $table->foreignId('subcategory_id')->index()->constrained('sub_categories')->onDelete('cascade');
         });
     }
 

@@ -14,17 +14,12 @@ return new class extends Migration
     public function up()
     {
         Schema::table('projects', function (Blueprint $table) {
-            $table->unsignedBigInteger('currency_id')->after('user_id');
-            $table->unsignedBigInteger('inquiry_id')->nullable()->after('currency_id');
+            $table->unsignedBigInteger('currency_id')->index()->after('user_id');
+            $table->unsignedBigInteger('inquiry_id')->index()->nullable()->after('currency_id');
             $table->string('estimated_time')->nullable();
-            $table->foreign('currency_id')
+            $table->foreign('currency_id')->index()
                   ->references('id')
                   ->on('currencies')
-                  ->onDelete('cascade');
-
-            $table->foreign('inquiry_id')
-                  ->references('id')
-                  ->on('inquiries')
                   ->onDelete('cascade');
         });
     }

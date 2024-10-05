@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('credit_debit_entries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('type'); // 'credit' or 'debit'
+            $table->foreignId('user_id')->index()->constrained('users')->onDelete('cascade');
+            $table->string('type')->index(); // 'credit' or 'debit'
             $table->decimal('amount', 15, 2);
             $table->text('remarks')->nullable();
             $table->timestamps();

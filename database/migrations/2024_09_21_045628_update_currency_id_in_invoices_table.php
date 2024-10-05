@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('invoices', function (Blueprint $table) {
             $table->string('hash' , 20)->unique();
-            $table->foreignId('currency_id')->constrained('currencies')->onDelete('cascade');
+            $table->foreignId('currency_id')->index()->constrained('currencies')->onDelete('cascade');
 
         });
     }

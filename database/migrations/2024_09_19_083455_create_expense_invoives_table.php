@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('expense_invoives', function (Blueprint $table) {
                 $table->id();
-                $table->foreignId('expense_id')->constrained('expenses')->onDelete('cascade');
+                $table->foreignId('expense_id')->index()->constrained('expenses')->onDelete('cascade');
                 $table->date('invoice_date');
-                $table->date('due_date');
+                $table->date('due_date')->index();
                 $table->decimal('amount', 15, 2);
-                $table->enum('status', ['pending', 'paid', 'overdue'])->default('pending');
+                $table->enum('status', ['pending', 'paid', 'overdue'])->index()->default('pending');
                 $table->timestamps();
         });
     }

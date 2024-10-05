@@ -14,9 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::table('clients', function (Blueprint $table) {
-            $table->foreignId('country_id')->nullable()->constrained(table: 'countries')->onDelete('cascade');
-            $table->foreignId('state_id')->nullable()->constrained(table: 'states')->onDelete('cascade');
-            $table->foreignId('city_id')->nullable()->constrained(table: 'cities')->onDelete('cascade');
+            $table->foreignId('country_id')->index()->nullable()->constrained(table: 'countries')->onDelete('cascade');
+            $table->foreignId('state_id')->index()->nullable()->constrained(table: 'states')->onDelete('cascade');
+            $table->foreignId('city_id')->index()->nullable()->constrained(table: 'cities')->onDelete('cascade');
 
         });
     }

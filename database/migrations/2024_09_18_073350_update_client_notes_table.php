@@ -14,14 +14,7 @@ return new class extends Migration
     public function up()
     {
         Schema::table('client_notes', function (Blueprint $table) {
-            if (!Schema::hasColumn('client_notes', 'inquiry_id')) {
-                $table->unsignedBigInteger('inquiry_id')->nullable();
-            }
-
-            $table->foreign('inquiry_id')
-                  ->references('id')
-                  ->on('inquiries')
-                  ->onDelete('cascade');
+            $table->unsignedBigInteger('inquiry_id')->index()->nullable();
         });
     }
 

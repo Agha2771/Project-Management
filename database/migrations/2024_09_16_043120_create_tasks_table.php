@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
-            $table->string('title');
+            $table->foreignId('project_id')->index()->constrained('projects')->onDelete('cascade');
+            $table->string('title')->index();
             $table->text('description')->nullable();
-            $table->date('due_date');
-            $table->enum('status', ['not_started', 'in_progress', 'completed'])->default('not_started');
+            $table->date('due_date')->index();
+            $table->enum('status', ['not_started', 'in_progress', 'completed'])->index()->default('not_started');
             $table->timestamps();
         });
     }

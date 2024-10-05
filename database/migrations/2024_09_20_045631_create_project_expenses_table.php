@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('project_expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->nullable()->constrained('projects')->onDelete('cascade');
-            $table->foreignId('invoice_id')->constrained('invoices')->onDelete('cascade');
+            $table->foreignId('project_id')->index()->nullable()->constrained('projects')->onDelete('cascade');
+            $table->foreignId('invoice_id')->index()->constrained('invoices')->onDelete('cascade');
             $table->text('description');
             $table->integer('qty')->default(1);
             $table->decimal('discount', 8, 2)->default(0.00); // 8 total digits, 2 after the decimal

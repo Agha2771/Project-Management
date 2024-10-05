@@ -18,10 +18,10 @@ return new class extends Migration
         });
 
         Schema::table('tasks', function (Blueprint $table) {
-            $table->date('start_date')->nullable();
+            $table->date('start_date')->index()->nullable();
             $table->string('estimated_time')->nullable();
-            $table->enum('status', ['todo', 'in_progress', 'completed', 'qa', 'bug_fixes', 'paused'])->default('todo');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->enum('status', ['todo', 'in_progress', 'completed', 'qa', 'bug_fixes', 'paused'])->index()->default('todo');
+            $table->foreignId('user_id')->index()->constrained('users')->onDelete('cascade');
         });
     }
 

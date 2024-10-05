@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('client_notes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Foreign key to users table
-            $table->string('name'); // Title or name of the note
+            $table->foreignId('user_id')->index()->constrained('users')->onDelete('cascade'); // Foreign key to users table
+            $table->string('name')->index(); // Title or name of the note
             $table->text('description'); // Content of the note
             $table->timestamps();
         });

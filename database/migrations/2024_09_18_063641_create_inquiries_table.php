@@ -15,14 +15,14 @@ return new class extends Migration
     {
         Schema::create('inquiries', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('title');
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
-            $table->enum('status', ['in_progress', 'completed', 'on_hold' , 'declined'])->default('in_progress');
+            $table->foreignId('user_id')->index()->constrained('users')->onDelete('cascade');
+            $table->string('title')->index();
+            $table->date('start_date')->nullable()->index();
+            $table->date('end_date')->nullable()->index();
+            $table->enum('status', ['in_progress', 'completed', 'on_hold' , 'declined'])->index()->default('in_progress');
             $table->decimal('budget', 15, 2)->nullable();
             $table->text('description')->nullable();
-            $table->foreignId('currency_id')->constrained('currencies')->onDelete('cascade'); // Foreign key to users table
+            $table->foreignId('currency_id')->index()->constrained('currencies')->onDelete('cascade'); // Foreign key to users table
             $table->timestamps();
         });
     }

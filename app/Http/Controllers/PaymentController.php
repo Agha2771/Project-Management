@@ -43,8 +43,8 @@ class PaymentController extends Controller
         $page_mum = $request->input('page_num', 1);
         $search = $request->input('search', '');
         $sort_by = $request->input('sortBy', 'desc');
-        $projects = $this->paymentRepository->paginate($per_page, ['*'], 'page', $page_mum, $search , $sort_by);
-        return $this->successResponse($projects, ResponseMessage::OK, Response::HTTP_OK);
+        $payments = $this->paymentRepository->paginate($per_page, ['*'], 'page', $page_mum, $search , $sort_by);
+        return $this->successResponse($payments, ResponseMessage::OK, Response::HTTP_OK);
     }
     }
     public function create(CreatePaymentRequest $request)

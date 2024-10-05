@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('project_id')->nullable()->constrained('projects')->onDelete('cascade');
+            $table->foreignId('project_id')->index()->nullable()->constrained('projects')->onDelete('cascade');
             $table->decimal('amount', 15, 2);
             $table->text('description')->nullable();
             $table->unsignedInteger('quantity')->default(1); // Add this line for quantity
