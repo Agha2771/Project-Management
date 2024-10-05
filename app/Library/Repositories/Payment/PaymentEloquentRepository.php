@@ -1,5 +1,6 @@
 <?php namespace ProjectManagement\Repositories\Payment;
 
+use ProjectManagement\Resources\PaymentResource;
 use ProjectManagement\Abstracts\EloquentRepository;
 use ProjectManagement\Models\Payment; // Update to use Payment model
 
@@ -21,7 +22,7 @@ class PaymentEloquentRepository extends EloquentRepository implements PaymentRep
 
     public function find($id)
     {
-        return $this->model->find($id);
+        return $this->model->with('invoice')->find($id);
     }
 
     public function getPaymentAgainstClient($invoice_id){
@@ -56,7 +57,6 @@ class PaymentEloquentRepository extends EloquentRepository implements PaymentRep
             $payment->remaining_amount = $data['remaining_amount'] ?? $payment->remaining_amount;
             $payment->save();
         }
-
         return $payment;
     }
 
@@ -68,21 +68,52 @@ class PaymentEloquentRepository extends EloquentRepository implements PaymentRep
         }
     }
 
-    public function paginate(int $per_page = 15, array $columns = ['*'], $page_name = 'page', $page = null, $search_term = null , $sort_by='desc')
+    public function paginate(int $per_page = 15, array $columns = ['*'], $page_name = 'page', $page = null, $search_term = null, $sort_by = 'desc')
     {
         $query = $this->model::with('invoice');
 
         if ($search_term) {
             $query->where(function ($query) use ($search_term) {
                 $query
-                      ->Where('status', 'like', "%{$search_term}%")
-                      ->orWhereHas('invoice', function ($query) use ($search_term) {
-                          $query->where('hash', 'like', "%{$search_term}%");
-                      })
-                    ;
+                    ->where('status', 'like', "%{$search_term}%")
+                    ->orWhereHas('invoice', function ($query) use ($search_term) {
+                        $query->where('hash', 'like', "%{$search_term}%");
+                    });
             });
         }
-        $query->orderBy('created_at', $sort_by);
-        return $query->paginate($per_page, $columns, $page_name, $page);
+
+        $payments = $query->orderBy('created_at', $sort_by)->paginate($per_page, $columns, $page_name, $page);
+        $result = [];
+
+        foreach ($payments as $payment) {
+            $invoiceId = $payment->invoice_id;
+
+            if (!isset($result[$invoiceId])) {
+                $result[$invoiceId] = [
+                    'invoice_id' => $payment->invoice->hash,
+                    'amount' => $payment->invoice->amount,
+                    'status' => ($payment->invoice->payments()->sum('amount_paid') <  $payment->invoice->amount) ? 'partial' : ($payment->invoice->payments()->sum('amount_paid') === 0 ? 'unpaid' : 'full'),
+                    'remaining_amount' => $payment->invoice->amount - $payment->invoice->payments()->sum('amount_paid'),
+                    'total_paid' => $payment->invoice->payments()->sum('amount_paid'),
+                    'payments' => []
+                ];
+            }
+            $result[$invoiceId]['payments'][] = [
+                'id' => $payment->id,
+                'amount' => $payment->amount_paid,
+                'created_at' => $payment->created_at,
+            ];
+        }
+        $result = array_values($result);
+
+        return [
+            'data' => $result,
+            'total_records' => $payments->total(),
+            'current_page' => $payments->currentPage(),
+            'total_pages' => $payments->lastPage(),
+            'page_num' => $page,
+            'per_page' => $per_page,
+        ];
     }
+
 }
